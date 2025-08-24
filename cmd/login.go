@@ -16,17 +16,6 @@ type LoginConfig struct {
 
 var loginCfg LoginConfig
 
-func init() {
-	loginCmd.Flags().StringVar(&loginCfg.GCID, "gcid", "", "极客时间登陆后用户id（必填）")
-	loginCmd.Flags().StringVar(&loginCfg.Gcess, "gcess", "", "极客时间登陆后用户令牌（必填）")
-	err := loginCmd.MarkFlagRequired("gcid")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	loginCmd.MarkFlagsRequiredTogether("gcid", "gcess")
-	rootCmd.AddCommand(loginCmd)
-}
-
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "设置极客时间登陆态",
@@ -38,4 +27,15 @@ var loginCmd = &cobra.Command{
 		}}
 		geekbang.GetViper().WriteConfig(config)
 	},
+}
+
+func init() {
+	loginCmd.Flags().StringVar(&loginCfg.GCID, "gcid", "", "用户id（必填）")
+	loginCmd.Flags().StringVar(&loginCfg.Gcess, "gcess", "", "用户令牌（必填）")
+	err := loginCmd.MarkFlagRequired("gcid")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	loginCmd.MarkFlagsRequiredTogether("gcid", "gcess")
+	rootCmd.AddCommand(loginCmd)
 }

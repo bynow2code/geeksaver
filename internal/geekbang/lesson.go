@@ -8,65 +8,61 @@ import (
 	"net/http"
 )
 
-// ArticleReq 文章详情请求
-type ArticleReq struct {
-	Id               string `json:"id"`
-	IncludeNeighbors bool   `json:"include_neighbors"`
-	IsFreelyRead     bool   `json:"is_freelyread"`
+// LessonReq 课表请求
+type LessonReq struct {
+	Cid    string `json:"cid"`
+	Size   int    `json:"size"`
+	Prev   int    `json:"prev"`
+	Order  string `json:"order"`
+	Sample bool   `json:"sample"`
 }
 
-// ArticleResp 文章详情返回
-type ArticleResp struct {
-	Error ArticleRespError `json:"error"`
+// LessonResp 课表返回
+type LessonResp struct {
+	Error []interface{} `json:"error"`
 	Data  struct {
-		Id             int    `json:"id"`
-		ArticleTitle   string `json:"article_title"`
-		ArticleContent string `json:"article_content"`
-		Neighbors      struct {
-			Left struct {
-				ArticleTitle string `json:"article_title"`
-				Id           int    `json:"id"`
-			} `json:"left"`
-			Right struct {
-				ArticleTitle string `json:"article_title"`
-				Id           int    `json:"id"`
-			} `json:"right"`
-		} `json:"neighbors"`
+		List []struct {
+			Id           int    `json:"id"`
+			ArticleTitle string `json:"article_title"`
+		} `json:"list"`
+		Page struct {
+			Count int  `json:"count"`
+			More  bool `json:"more"`
+		} `json:"page"`
 	} `json:"data"`
 	Code int `json:"code"`
 }
 
-// ArticleRespError 文章详情错误返回
-type ArticleRespError struct {
+// LessonRespError 课表错误返回
+type LessonRespError struct {
 	Msg  string `json:"msg"`
 	Code int    `json:"code"`
 }
 
 // UnmarshalJSON 兼容极客不规范的 json 返回格式
-func (a *ArticleRespError) UnmarshalJSON(data []byte) error {
+func (l *LessonRespError) UnmarshalJSON(data []byte) error {
 	// 处理空数组情况
 	if string(data) == "[]" {
-		*a = ArticleRespError{}
+		*l = LessonRespError{}
 		return nil
 	}
 
 	// 处理结构体情况
-	var tmp ArticleRespError
+	var tmp LessonRespError
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
-	*a = tmp
+	*l = tmp
 	return nil
 }
 
-// GetArticle 获取文章详情数据
-func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
-	reqJson, err := json.Marshal(articleReq)
+func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
+	reqJson, err := json.Marshal(lessonReq)
 	if err != nil {
 		return nil, err
 	}
 
-	url := "https://time.geekbang.org/serv/v1/article"
+	url := "https://time.geekbang.org/serv/v1/column/articles"
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqJson))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -97,9 +93,9 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	var articleResp *ArticleResp
-	if err := json.Unmarshal(body, &articleResp); err != nil {
+	var lessonResp *LessonResp
+	if err := json.Unmarshal(body, &lessonResp); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response: %w, response body: %s", err, string(body))
 	}
-	return articleResp, nil
+	return lessonResp, nil
 }
