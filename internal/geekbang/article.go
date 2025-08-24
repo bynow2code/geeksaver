@@ -8,35 +8,28 @@ import (
 	"net/http"
 )
 
-// ArticleReq 文章详情请求
+// ArticleReq 文章详情请求体
 type ArticleReq struct {
 	Id               string `json:"id"`
 	IncludeNeighbors bool   `json:"include_neighbors"`
 	IsFreelyRead     bool   `json:"is_freelyread"`
 }
 
-// ArticleResp 文章详情返回
+// ArticleResp 文章详情响应体
 type ArticleResp struct {
 	Error ArticleRespError `json:"error"`
-	Data  struct {
-		Id             int    `json:"id"`
-		ArticleTitle   string `json:"article_title"`
-		ArticleContent string `json:"article_content"`
-		Neighbors      struct {
-			Left struct {
-				ArticleTitle string `json:"article_title"`
-				Id           int    `json:"id"`
-			} `json:"left"`
-			Right struct {
-				ArticleTitle string `json:"article_title"`
-				Id           int    `json:"id"`
-			} `json:"right"`
-		} `json:"neighbors"`
-	} `json:"data"`
-	Code int `json:"code"`
+	Data  Article          `json:"data"`
+	Code  int              `json:"code"`
 }
 
-// ArticleRespError 文章详情错误返回
+// Article 文章详情
+type Article struct {
+	Id             int    `json:"id"`
+	ArticleTitle   string `json:"article_title"`
+	ArticleContent string `json:"article_content"`
+}
+
+// ArticleRespError 错误响应体
 type ArticleRespError struct {
 	Msg  string `json:"msg"`
 	Code int    `json:"code"`
@@ -82,7 +75,7 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 		Name:  "GCESS",
 		Value: "Bg0BAQcEIVN2hwoEAAAAAAIE8bqqaAUEAAAAAAME8bqqaAkBAQgBAwQEAI0nAAEI4LspAAAAAAALAgYADAEBBgR66IGN",
 	})
-	resp, err := GetHttpClient().Do(req)
+	resp, err := GetClient().Do(req)
 	if err != nil {
 		return nil, err
 	}

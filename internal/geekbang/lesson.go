@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// LessonReq 课表请求
+// LessonReq 课表请求体
 type LessonReq struct {
 	Cid    string `json:"cid"`
 	Size   int    `json:"size"`
@@ -17,14 +17,11 @@ type LessonReq struct {
 	Sample bool   `json:"sample"`
 }
 
-// LessonResp 课表返回
+// LessonResp 课表响应体
 type LessonResp struct {
 	Error []interface{} `json:"error"`
 	Data  struct {
-		List []struct {
-			Id           int    `json:"id"`
-			ArticleTitle string `json:"article_title"`
-		} `json:"list"`
+		List []Lesson `json:"list"`
 		Page struct {
 			Count int  `json:"count"`
 			More  bool `json:"more"`
@@ -33,7 +30,13 @@ type LessonResp struct {
 	Code int `json:"code"`
 }
 
-// LessonRespError 课表错误返回
+// Lesson 课表数据
+type Lesson struct {
+	Id           int    `json:"id"`
+	ArticleTitle string `json:"article_title"`
+}
+
+// LessonRespError 错误响应体
 type LessonRespError struct {
 	Msg  string `json:"msg"`
 	Code int    `json:"code"`
@@ -78,7 +81,7 @@ func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
 		Name:  "GCESS",
 		Value: "Bg0BAQcEIVN2hwoEAAAAAAIE8bqqaAUEAAAAAAME8bqqaAkBAQgBAwQEAI0nAAEI4LspAAAAAAALAgYADAEBBgR66IGN",
 	})
-	resp, err := GetHttpClient().Do(req)
+	resp, err := GetClient().Do(req)
 	if err != nil {
 		return nil, err
 	}
