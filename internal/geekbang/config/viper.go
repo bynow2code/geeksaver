@@ -49,6 +49,7 @@ func ReadInConfig() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -59,8 +60,9 @@ func Unmarshal() error {
 		return err
 	}
 
-	if err = v.Unmarshal(&config); err != nil {
+	if err = v.Unmarshal(GetConfig()); err != nil {
 		return err
 	}
+
 	return nil
 }

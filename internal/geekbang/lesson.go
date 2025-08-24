@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/bynow2code/geekbangdocsaver/internal/geekbang/config"
 )
 
 // LessonReq 课表请求体
@@ -59,6 +61,7 @@ func (l *LessonRespError) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// GetLessons 获取课表
 func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
 	reqJson, err := json.Marshal(lessonReq)
 	if err != nil {
@@ -70,17 +73,21 @@ func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Origin", "https://time.geekbang.org")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0")
+
+	cfg := config.GetConfig()
 	req.AddCookie(&http.Cookie{
 		Name:  "GCID",
-		Value: "e185b7b-cbe0e85-281047b-6227ff1",
+		Value: cfg.User.GCID,
 	})
 	req.AddCookie(&http.Cookie{
 		Name:  "GCESS",
-		Value: "Bg0BAQcEIVN2hwoEAAAAAAIE8bqqaAUEAAAAAAME8bqqaAkBAQgBAwQEAI0nAAEI4LspAAAAAAALAgYADAEBBgR66IGN",
+		Value: cfg.User.GCESS,
 	})
+
 	resp, err := GetClient().Do(req)
 	if err != nil {
 		return nil, err

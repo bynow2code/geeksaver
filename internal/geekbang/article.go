@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/bynow2code/geekbangdocsaver/internal/geekbang/config"
 )
 
 // ArticleReq 文章详情请求体
@@ -49,10 +51,11 @@ func (a *ArticleRespError) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*a = tmp
+
 	return nil
 }
 
-// GetArticle 获取文章详情数据
+// GetArticle 获取文章数据
 func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 	reqJson, err := json.Marshal(articleReq)
 	if err != nil {
@@ -64,17 +67,21 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Origin", "https://time.geekbang.org")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0")
+
+	cfg := config.GetConfig()
 	req.AddCookie(&http.Cookie{
 		Name:  "GCID",
-		Value: "e185b7b-cbe0e85-281047b-6227ff1",
+		Value: cfg.User.GCID,
 	})
 	req.AddCookie(&http.Cookie{
 		Name:  "GCESS",
-		Value: "Bg0BAQcEIVN2hwoEAAAAAAIE8bqqaAUEAAAAAAME8bqqaAkBAQgBAwQEAI0nAAEI4LspAAAAAAALAgYADAEBBgR66IGN",
+		Value: cfg.User.GCESS,
 	})
+
 	resp, err := GetClient().Do(req)
 	if err != nil {
 		return nil, err
