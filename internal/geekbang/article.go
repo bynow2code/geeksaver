@@ -82,7 +82,7 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 		Name:  "GCESS",
 		Value: "Bg0BAQcEIVN2hwoEAAAAAAIE8bqqaAUEAAAAAAME8bqqaAkBAQgBAwQEAI0nAAEI4LspAAAAAAALAgYADAEBBgR66IGN",
 	})
-	resp, err := GetClient().Do(req)
+	resp, err := GetHttpClient().Do(req)
 	if err != nil {
 		return nil, err
 	}
