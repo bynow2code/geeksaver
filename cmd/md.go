@@ -40,7 +40,7 @@ func init() {
 // 保存文章任务人口
 func runMdTask() {
 	// 获取课表
-	lessons, err := getLessons("100093501")
+	lessons, err := getLessons(cid)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -165,7 +165,7 @@ func saveArticle(lesson geekbang.Lesson) error {
 func saveMd(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
-	err := os.MkdirAll(cfg.Md.SavePath, 0666)
+	err := os.MkdirAll(cfg.Md.SavePath, 0755)
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func saveMd(article *geekbang.ArticleResp, mdString string) error {
 	// 创建 md 文件
 	mdName := fmt.Sprintf("%d.md", article.Data.Id)
 	mdFile := path.Join(cfg.Md.SavePath, mdName)
-	file, err := os.OpenFile(mdFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	file, err := os.OpenFile(mdFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
