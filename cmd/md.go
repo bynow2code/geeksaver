@@ -15,6 +15,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cid string // 课程id
+
 var mdCmd = &cobra.Command{
 	Use:   "md",
 	Short: "将课程用 markdown 的形式保存到本地",
@@ -25,11 +27,13 @@ var mdCmd = &cobra.Command{
 }
 
 func init() {
-	mdCmd.Flags().StringVar(&loginFlg.GCID, "cid", "", "课程id（必填）")
+	mdCmd.Flags().StringVar(&cid, "cid", "", "课程id（必填）")
+
 	err := mdCmd.MarkFlagRequired("cid")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	rootCmd.AddCommand(mdCmd)
 }
 

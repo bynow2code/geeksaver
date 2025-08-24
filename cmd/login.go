@@ -7,13 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// LoginFlag 登陆配置 flag
-type LoginFlag struct {
-	GCID  string // 用户id
-	Gcess string // 用户令牌
-}
-
-var loginFlg LoginFlag
+var (
+	gcid  string // 用户id
+	gcess string // 用户id
+)
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
@@ -21,10 +18,11 @@ var loginCmd = &cobra.Command{
 	Long:  `设置极客时间登陆态后，才可以使用此工具`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 设置配置项
-		config.SetGCID(loginFlg.GCID)
-		config.SetGCESS(loginFlg.Gcess)
-		newConfig := config.GetConfig()
+		config.SetGCID(gcid)
+		config.SetGCESS(gcess)
+
 		// 持久化到配置文件
+		newConfig := config.GetConfig()
 		err := config.WriteConfig(newConfig)
 		if err != nil {
 			log.Fatalln(err)
@@ -33,12 +31,14 @@ var loginCmd = &cobra.Command{
 }
 
 func init() {
-	loginCmd.Flags().StringVar(&loginFlg.GCID, "gcid", "", "用户id（必填）")
-	loginCmd.Flags().StringVar(&loginFlg.Gcess, "gcess", "", "用户令牌（必填）")
+	loginCmd.Flags().StringVar(&gcid, "gcid", "", "用户id（必填）")
+	loginCmd.Flags().StringVar(&gcess, "gcess", "", "用户令牌（必填）")
+
 	err := loginCmd.MarkFlagRequired("gcid")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	loginCmd.MarkFlagsRequiredTogether("gcid", "gcess")
+
 	rootCmd.AddCommand(loginCmd)
 }

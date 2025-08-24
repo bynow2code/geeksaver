@@ -24,7 +24,7 @@ type MdConfig struct {
 }
 
 // 全局配置实例
-var config *Config
+var config = &Config{}
 
 func init() {
 	config.Md.SavePath = os.ExpandEnv(defaultMdSavePath)

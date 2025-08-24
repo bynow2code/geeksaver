@@ -9,7 +9,6 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "geek",
 	Short: "极客时间课程保存工具",
 	Long:  "极客时间课程保存工具，该脚本仅供学习使用",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
