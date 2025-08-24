@@ -56,8 +56,9 @@ func runMdTask() {
 
 		fmt.Println()
 
-		break
 	}
+
+	fmt.Printf("课程已保存至：%s", config.GetConfig().Md.SavePath)
 }
 
 // 获取课表
@@ -162,6 +163,7 @@ func saveArticle(lesson geekbang.Lesson) error {
 	return nil
 }
 
+// 保存 md
 func saveMd(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
