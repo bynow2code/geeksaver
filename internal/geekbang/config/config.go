@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-const defaultMdSavePath = "$HOME/geekbang-docs"
+const DefaultMdSavePath = "$HOME/geekbang-docs"
 
 // Config 程序主配置文件
 type Config struct {
@@ -27,7 +27,7 @@ type MdConfig struct {
 var config = &Config{}
 
 func init() {
-	config.Md.SavePath = os.ExpandEnv(defaultMdSavePath)
+	config.Md.SavePath = os.ExpandEnv(DefaultMdSavePath)
 }
 
 // SetGCID 设置用户id

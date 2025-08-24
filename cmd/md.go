@@ -20,7 +20,7 @@ var cid string // 课程id
 var mdCmd = &cobra.Command{
 	Use:   "md",
 	Short: "将课程用 markdown 的形式保存到本地",
-	Long:  `将极客时间的课程用 markdown 的形式保存到本地`,
+	Long:  fmt.Sprintf("将极客时间的课程用 markdown 的形式保存到本地，默认保存路径：%s", config.DefaultMdSavePath),
 	Run: func(cmd *cobra.Command, args []string) {
 		runMdTask()
 	},
