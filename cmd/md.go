@@ -18,16 +18,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cid string // 课程id
-
 var mdCmd = &cobra.Command{
 	Use:   "md",
 	Short: "极客时间课程转 Markdown 并本地保存",
 	Long:  fmt.Sprintf("极客时间课程转 Markdown 并本地保存，默认保存路径：%s", config.DefaultMdSavePath),
 	Run: func(cmd *cobra.Command, args []string) {
+		// 获取参数
+		cid, err := cmd.Flags().GetString("cid")
+		if err != nil {
+			log.Fatalln(err)
+		}
+
 		processor := &MdProcessor{cid: cid}
+
 		// 获取课程信息
-		err := processor.getCourse()
+		err = processor.getCourse()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -53,7 +58,7 @@ var mdCmd = &cobra.Command{
 }
 
 func init() {
-	mdCmd.Flags().StringVar(&cid, "cid", "", "课程id（必填）")
+	mdCmd.Flags().String("cid", "", "课程id（必填）")
 
 	err := mdCmd.MarkFlagRequired("cid")
 	if err != nil {
