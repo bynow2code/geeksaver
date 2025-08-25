@@ -155,8 +155,7 @@ func (p *MdProcessor) getOutline() error {
 func (p *MdProcessor) saveArticle() error {
 	for _, outline := range p.outlineResp.Data.List {
 		// 进度条
-		progressBar := progressbar.NewOptions(3, progressbar.OptionFullWidth())
-		progressBar.Describe("获取文章内容")
+		progressBar := progressbar.Default(3, "获取文章内容")
 
 		// 获取文章内容
 		articleResp, err := geekbang.GetArticle(geekbang.ArticleReq{
