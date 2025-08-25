@@ -101,5 +101,11 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 	if err = json.Unmarshal(body, &articleResp); err != nil {
 		return nil, err
 	}
+
+	// 检查业务错误
+	if articleResp.Code != 0 {
+		return nil, fmt.Errorf("%s", articleResp.Error.Msg)
+	}
+
 	return &articleResp, nil
 }

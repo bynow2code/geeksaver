@@ -21,7 +21,7 @@ type OutlineReq struct {
 
 // OutlineResp 课表响应体
 type OutlineResp struct {
-	Error []interface{} `json:"error"`
+	Error OutlineRespError `json:"error"`
 	Data  struct {
 		List []Outline `json:"list"`
 		Page struct {
@@ -107,5 +107,11 @@ func GetOutline(outlineReq OutlineReq) (*OutlineResp, error) {
 	if err = json.Unmarshal(body, &outlineResp); err != nil {
 		return nil, err
 	}
+
+	// 检查业务错误
+	if outlineResp.Code != 0 {
+		return nil, fmt.Errorf("%s", outlineResp.Error.Msg)
+	}
+
 	return &outlineResp, nil
 }

@@ -90,5 +90,11 @@ func GetCourse(courseReq CourseReq) (*CourseResp, error) {
 	if err = json.Unmarshal(body, &courseResp); err != nil {
 		return nil, err
 	}
+
+	// 检查业务错误
+	if courseResp.Code != 0 {
+		return nil, fmt.Errorf("%s", courseResp.Error.Msg)
+	}
+
 	return &courseResp, nil
 }
