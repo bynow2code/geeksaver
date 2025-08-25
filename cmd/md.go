@@ -68,6 +68,9 @@ type MdProcessor struct {
 
 // 获取课程信息
 func (p *MdProcessor) getCourse() error {
+	// 进度条
+	progressBar := progressbar.Default(1, "获取课程信息")
+
 	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
 		return err
@@ -82,13 +85,19 @@ func (p *MdProcessor) getCourse() error {
 	}
 	p.courseResp = courseResp
 
+	// 进度条满
+	err = progressBar.Finish()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // 获取课表
 func (p *MdProcessor) getOutline() error {
 	// 进度条
-	progressBar := progressbar.Default(1, "获取课表")
+	progressBar := progressbar.Default(1, "获取课表信息")
 
 	// 请求 api
 	outlineResp, err := geekbang.GetOutline(geekbang.OutlineReq{
