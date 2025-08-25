@@ -246,6 +246,7 @@ func (p *MdProcessor) createMdSummary() error {
 
 	// 在内存中拼接
 	var content strings.Builder
+	// todo 使用 content.Grow 预分配内存，估算长度优化
 	for _, outline := range p.outlineResp.Data.List {
 		line := fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id)
 		content.WriteString(line)
