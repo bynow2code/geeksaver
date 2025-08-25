@@ -18,8 +18,8 @@ var configCmd = &cobra.Command{
 
 		// 组装 table 数据
 		var data [][]string
-		data = append(data, []string{"user", "gcid", cfg.User.GCID, "极客时间登陆用户id"})
-		data = append(data, []string{"user", "gcess", cfg.User.GCESS, "极客时间登陆token"})
+		data = append(data, []string{"user", "gcid", cfg.User.GCID, "极客时间登陆用户 ID"})
+		data = append(data, []string{"user", "gcess", cfg.User.GCESS, "极客时间登陆 token"})
 		data = append(data, []string{"md", "savepath", cfg.Md.SavePath, "markdown 保存路径"})
 
 		// 添加 table 头部
