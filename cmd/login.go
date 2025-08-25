@@ -14,8 +14,8 @@ var (
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "设置极客时间登陆态",
-	Long:  `设置极客时间登陆态后，才可以使用此工具`,
+	Short: "极客时间登录态设置",
+	Long:  `极客时间登录态设置，设置好后工具才可以正常使用`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 设置配置项
 		config.SetGCID(gcid)

@@ -9,8 +9,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Short: "极客时间课程保存工具",
-	Long:  "极客时间课程保存工具，该脚本仅供学习使用",
+	Short: "极客时间课程本地保存工具",
+	Long:  "极客时间课程本地保存工具，该程序仅供学习使用",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// 读取程序配置文件
 		vp := config.GetViper()
