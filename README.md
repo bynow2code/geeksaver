@@ -7,6 +7,21 @@ login       极客时间登录态设置
 config      配置信息
 md          极客时间课程转 Markdown 并本地保存
 ```
+### 安装
+1. #### 使用 go install 安装
+    默认安装在 gopath 中，若未设置为环境变量，请自行解决
+   ```
+    # 查看 gopath 路径
+    go env GOPATH
+   
+    # 安装 geeksaver
+    go install github.com/bynow2code/geeksaver
+   
+    # 验证安装成功
+    geeksaver config
+   ```
+2. ### 从Releases 页面下载二进制文件
+
 ### 使用方法
 1. #### 先设置登陆态
     在极客时间网页登陆完之后，打开f12，接着点击：应用程序 -> Cookie，就可以获取 GCID 和 GCESS 了
