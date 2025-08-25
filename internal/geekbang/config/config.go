@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-const DefaultMdSavePath = "$HOME/geekbang-docs"
+const DefaultMdSavePath = "$HOME/geek-docs"
 
 // Config 程序主配置文件
 type Config struct {

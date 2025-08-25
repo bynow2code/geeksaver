@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/bynow2code/geekbangdocsaver/internal/geekbang/config"
+	"github.com/bynow2code/geeksaver/internal/geekbang/config"
 )
 
 // OutlineReq 课表请求体

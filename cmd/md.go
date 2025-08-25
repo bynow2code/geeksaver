@@ -11,8 +11,8 @@ import (
 	"time"
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
-	"github.com/bynow2code/geekbangdocsaver/internal/geekbang"
-	"github.com/bynow2code/geekbangdocsaver/internal/geekbang/config"
+	"github.com/bynow2code/geeksaver/internal/geekbang"
+	"github.com/bynow2code/geeksaver/internal/geekbang/config"
 	"github.com/olekukonko/tablewriter"
 	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"

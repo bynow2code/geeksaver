@@ -1,4 +1,4 @@
-module github.com/bynow2code/geekbangdocsaver
+module github.com/bynow2code/geeksaver
 
 go 1.25.0
 

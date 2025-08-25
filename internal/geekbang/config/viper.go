@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DefaultConfigFile = "$HOME/geekbang-doc-saver.yml" // 默认程序配置文件
+	DefaultConfigFile = "$HOME/geek-saver.yml" // 默认程序配置文件
 )
 
 var v *viper.Viper
