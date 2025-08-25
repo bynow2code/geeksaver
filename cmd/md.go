@@ -244,12 +244,14 @@ func (p *MdProcessor) createMdSummary() error {
 	}
 	defer file.Close()
 
+	// 在内存中拼接
 	var content strings.Builder
 	for _, outline := range p.outlineResp.Data.List {
 		line := fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id)
 		content.WriteString(line)
 	}
 
+	// 一次性写入
 	_, err = file.WriteString(content.String())
 	if err != nil {
 		return err
