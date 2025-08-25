@@ -24,7 +24,7 @@ md          极客时间课程转 Markdown 并本地保存
     课程ID：100029501
 
 4. #### 开始保存！
-    课程到 markdown 格式，默认保存在 `$HOME/geek-docs`
+    课程使用 markdown 格式，默认保存在 `$HOME/geek-docs`
     ```
       geeksaver md --cid 100029501
     ```
