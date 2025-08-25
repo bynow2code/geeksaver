@@ -198,9 +198,6 @@ func (p *MdProcessor) saveArticle() error {
 			return err
 		}
 
-		// 换行
-		fmt.Println("请稍等...")
-
 		// 延迟 1-1.5 秒（随机波动）
 		delay := time.Second + time.Duration(rand.Intn(500))*time.Millisecond
 		time.Sleep(delay)
