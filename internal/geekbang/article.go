@@ -65,7 +65,7 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 	url := "https://time.geekbang.org/serv/v1/article"
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqJson))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -89,17 +89,17 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return nil, fmt.Errorf("http status code %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
+		return nil, err
 	}
 
-	var articleResp *ArticleResp
-	if err := json.Unmarshal(body, &articleResp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w, response body: %s", err, string(body))
+	var articleResp ArticleResp
+	if err = json.Unmarshal(body, &articleResp); err != nil {
+		return nil, err
 	}
-	return articleResp, nil
+	return &articleResp, nil
 }

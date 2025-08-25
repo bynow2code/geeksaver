@@ -10,8 +10,8 @@ import (
 	"github.com/bynow2code/geekbangdocsaver/internal/geekbang/config"
 )
 
-// LessonReq 课表请求体
-type LessonReq struct {
+// OutlineReq 课表请求体
+type OutlineReq struct {
 	Cid    string `json:"cid"`
 	Size   int    `json:"size"`
 	Prev   int    `json:"prev"`
@@ -19,11 +19,11 @@ type LessonReq struct {
 	Sample bool   `json:"sample"`
 }
 
-// LessonResp 课表响应体
-type LessonResp struct {
+// OutlineResp 课表响应体
+type OutlineResp struct {
 	Error []interface{} `json:"error"`
 	Data  struct {
-		List []Lesson `json:"list"`
+		List []Outline `json:"list"`
 		Page struct {
 			Count int  `json:"count"`
 			More  bool `json:"more"`
@@ -32,28 +32,28 @@ type LessonResp struct {
 	Code int `json:"code"`
 }
 
-// Lesson 课表数据
-type Lesson struct {
+// Outline 课表数据
+type Outline struct {
 	Id           int    `json:"id"`
 	ArticleTitle string `json:"article_title"`
 }
 
-// LessonRespError 错误响应体
-type LessonRespError struct {
+// OutlineRespError 错误响应体
+type OutlineRespError struct {
 	Msg  string `json:"msg"`
 	Code int    `json:"code"`
 }
 
 // UnmarshalJSON 兼容极客不规范的 json 返回格式
-func (l *LessonRespError) UnmarshalJSON(data []byte) error {
+func (l *OutlineRespError) UnmarshalJSON(data []byte) error {
 	// 处理空数组情况
 	if string(data) == "[]" {
-		*l = LessonRespError{}
+		*l = OutlineRespError{}
 		return nil
 	}
 
 	// 处理结构体情况
-	var tmp LessonRespError
+	var tmp OutlineRespError
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
@@ -61,9 +61,9 @@ func (l *LessonRespError) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// GetLessons 获取课表
-func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
-	reqJson, err := json.Marshal(lessonReq)
+// GetOutline 获取课表
+func GetOutline(outlineReq OutlineReq) (*OutlineResp, error) {
+	reqJson, err := json.Marshal(outlineReq)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
 	url := "https://time.geekbang.org/serv/v1/column/articles"
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqJson))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -95,17 +95,17 @@ func GetLessons(lessonReq LessonReq) (*LessonResp, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return nil, fmt.Errorf("http status code %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
+		return nil, err
 	}
 
-	var lessonResp *LessonResp
-	if err := json.Unmarshal(body, &lessonResp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w, response body: %s", err, string(body))
+	var outlineResp OutlineResp
+	if err = json.Unmarshal(body, &outlineResp); err != nil {
+		return nil, err
 	}
-	return lessonResp, nil
+	return &outlineResp, nil
 }

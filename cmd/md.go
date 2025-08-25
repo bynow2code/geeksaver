@@ -22,7 +22,30 @@ var mdCmd = &cobra.Command{
 	Short: "将课程用 markdown 的形式保存到本地",
 	Long:  fmt.Sprintf("将极客时间的课程用 markdown 的形式保存到本地，默认保存路径：%s", config.DefaultMdSavePath),
 	Run: func(cmd *cobra.Command, args []string) {
-		runMdTask()
+		processor := &MdProcessor{cid: cid}
+		// 获取课程信息
+		err := processor.getCourse()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		// 获取课表信息
+		err = processor.getOutline()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		// 保存文章内容
+		err = processor.saveArticle()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		// 生成 SUMMARY 文件
+		err = processor.createMdSummary()
+		if err != nil {
+			log.Fatalln(err)
+		}
 	},
 }
 
@@ -37,57 +60,59 @@ func init() {
 	rootCmd.AddCommand(mdCmd)
 }
 
-// 保存文章任务人口
-func runMdTask() {
-	// 获取课表
-	lessons, err := getLessons(cid)
+type MdProcessor struct {
+	cid         string                // 课程id
+	courseResp  *geekbang.CourseResp  // 课程响应体
+	outlineResp *geekbang.OutlineResp // 课表响应体
+}
+
+// 获取课程信息
+func (p *MdProcessor) getCourse() error {
+	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 
-	// 获取下载文章
-	for _, lesson := range lessons.Data.List {
-		fmt.Printf("处理：（%d %s）\n", lesson.Id, lesson.ArticleTitle)
-
-		err = saveArticle(lesson)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		fmt.Println()
-
+	courseResp, err := geekbang.GetCourse(geekbang.CourseReq{
+		ProductId:            int64(productId),
+		WithRecommendArticle: false,
+	})
+	if err != nil {
+		return err
 	}
+	p.courseResp = courseResp
 
-	fmt.Printf("课程已保存至：%s", config.GetConfig().Md.SavePath)
+	return nil
 }
 
 // 获取课表
-func getLessons(cid string) (*geekbang.LessonResp, error) {
+func (p *MdProcessor) getOutline() error {
 	// 进度条
-	lessonBar := progressbar.Default(1, "获取课表")
+	progressBar := progressbar.Default(1, "获取课表")
 
 	// 请求 api
-	lessons, err := geekbang.GetLessons(geekbang.LessonReq{
-		Cid:    cid,
+	outlineResp, err := geekbang.GetOutline(geekbang.OutlineReq{
+		Cid:    p.cid,
 		Size:   500,
 		Prev:   0,
 		Order:  "earliest",
 		Sample: false,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
+	p.outlineResp = outlineResp
 
 	// 进度条满
-	err = lessonBar.Finish()
+	err = progressBar.Finish()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// 组装 table 数据
 	var data [][]string
-	for _, lesson := range lessons.Data.List {
-		data = append(data, []string{strconv.Itoa(lesson.Id), lesson.ArticleTitle})
+	for _, outline := range outlineResp.Data.List {
+		data = append(data, []string{strconv.Itoa(outline.Id), outline.ArticleTitle})
 	}
 
 	// 添加 table 头部
@@ -97,84 +122,89 @@ func getLessons(cid string) (*geekbang.LessonResp, error) {
 	// 添加 table 数据
 	err = table.Bulk(data)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// 添加 table 脚部并渲染
-	table.Footer([]string{"total", strconv.Itoa(lessons.Data.Page.Count)})
+	table.Footer([]string{"total", strconv.Itoa(outlineResp.Data.Page.Count)})
 	if err = table.Render(); err != nil {
-		return nil, err
-	}
-
-	return lessons, nil
-}
-
-// 保存文章
-func saveArticle(lesson geekbang.Lesson) error {
-	// 进度条初始化
-	articleBar := progressbar.NewOptions(3,
-		progressbar.OptionShowCount(),
-	)
-
-	// 获取文章内容
-	articleBar.Describe("获取文章内容")
-	article, err := geekbang.GetArticle(geekbang.ArticleReq{
-		Id:               strconv.Itoa(lesson.Id),
-		IncludeNeighbors: true,
-		IsFreelyRead:     true,
-	})
-	if err != nil {
-		return err
-	}
-
-	// 获取文章内容，进度+1
-	err = articleBar.Add(1)
-	if err != nil {
-		return err
-	}
-
-	// 转换为 md
-	articleBar.Describe("转换到 markdown")
-	htmlInput := article.Data.ArticleContent
-	mdString, err := htmltomarkdown.ConvertString(htmlInput)
-	if err != nil {
-		return err
-	}
-
-	// 转换为 md，进度+2
-	err = articleBar.Add(1)
-	if err != nil {
-		return err
-	}
-
-	// 保存 md
-	articleBar.Describe("保存 markdown 文件")
-	err = saveMd(article, mdString)
-	if err != nil {
-		return err
-	}
-
-	//保存 md，进度+3
-	err = articleBar.Add(1)
-	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// 保存 md
-func saveMd(article *geekbang.ArticleResp, mdString string) error {
+// 保存文章
+func (p *MdProcessor) saveArticle() error {
+	for _, outline := range p.outlineResp.Data.List {
+		// 进度条
+		progressBar := progressbar.NewOptions(3,
+			progressbar.OptionShowCount(),
+		)
+
+		// 获取文章内容
+		progressBar.Describe("获取文章内容")
+		articleResp, err := geekbang.GetArticle(geekbang.ArticleReq{
+			Id:               strconv.Itoa(outline.Id),
+			IncludeNeighbors: true,
+			IsFreelyRead:     true,
+		})
+		if err != nil {
+			return err
+		}
+
+		// 获取文章内容完成，进度->1
+		err = progressBar.Add(1)
+		if err != nil {
+			return err
+		}
+
+		// 转换为 md
+		progressBar.Describe("转换到 markdown")
+		htmlInput := articleResp.Data.ArticleContent
+		mdString, err := htmltomarkdown.ConvertString(htmlInput)
+		if err != nil {
+			return err
+		}
+
+		// 转换为 md 完成，进度->2
+		err = progressBar.Add(1)
+		if err != nil {
+			return err
+		}
+
+		// 保存 md
+		progressBar.Describe("保存 markdown 文件")
+		err = p.saveMdArticle(articleResp, mdString)
+		if err != nil {
+			return err
+		}
+
+		//保存 md 完成，进度->3
+		err = progressBar.Add(1)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+// 保存文章 md
+func (p *MdProcessor) saveMdArticle(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
-	err := os.MkdirAll(cfg.Md.SavePath, 0755)
+	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
+	mdDir := path.Join(articleDir, "docs")
+	err := os.MkdirAll(mdDir, 0755)
 	if err != nil {
 		return err
 	}
 
 	// 创建 md 文件
 	mdName := fmt.Sprintf("%d.md", article.Data.Id)
-	mdFile := path.Join(cfg.Md.SavePath, mdName)
+	mdFile := path.Join(mdDir, mdName)
 	file, err := os.OpenFile(mdFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -187,5 +217,24 @@ func saveMd(article *geekbang.ArticleResp, mdString string) error {
 		return err
 	}
 
+	return nil
+}
+
+// 创建 summary.md
+func (p *MdProcessor) createMdSummary() error {
+	cfg := config.GetConfig()
+	summaryFile := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
+	file, err := os.OpenFile(summaryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	for _, outline := range p.outlineResp.Data.List {
+		_, err = file.WriteString(fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id))
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
