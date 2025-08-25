@@ -76,6 +76,7 @@ func GetOutline(outlineReq OutlineReq) (*OutlineResp, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Origin", "https://time.geekbang.org")
+	req.Header.Set("User-Agent", "")
 
 	cfg := config.GetConfig()
 	req.AddCookie(&http.Cookie{
