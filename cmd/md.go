@@ -70,7 +70,8 @@ type MdProcessor struct {
 // 获取课程信息
 func (p *MdProcessor) getCourse() error {
 	// 进度条
-	progressBar := progressbar.Default(1, "获取课程信息")
+	progressBar := progressbar.NewOptions(1)
+	progressBar.Describe("获取课程信息")
 
 	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
@@ -98,7 +99,8 @@ func (p *MdProcessor) getCourse() error {
 // 获取课表
 func (p *MdProcessor) getOutline() error {
 	// 进度条
-	progressBar := progressbar.Default(1, "获取课表信息")
+	progressBar := progressbar.NewOptions(1)
+	progressBar.Describe("获取课表信息")
 
 	// 请求 api
 	outlineResp, err := geekbang.GetOutline(geekbang.OutlineReq{
@@ -234,7 +236,8 @@ func (p *MdProcessor) saveMdArticle(article *geekbang.ArticleResp, mdString stri
 // 创建 summary.md
 func (p *MdProcessor) createMdSummary() error {
 	// 进度条
-	progressBar := progressbar.Default(1, "创建课程 summary.md")
+	progressBar := progressbar.NewOptions(1)
+	progressBar.Describe("创建课程 summary.md")
 
 	cfg := config.GetConfig()
 	summaryFile := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
