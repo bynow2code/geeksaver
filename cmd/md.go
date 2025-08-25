@@ -175,7 +175,7 @@ func (p *MdProcessor) saveArticle() error {
 		}
 
 		// 转换为 md
-		progressBar.Describe("转换到 markdown")
+		progressBar.Describe("转换为 markdown 格式")
 		htmlInput := fmt.Sprintf("<h1>%s</h1>", articleResp.Data.ArticleTitle)
 		htmlInput += articleResp.Data.ArticleContent
 		mdString, err := htmltomarkdown.ConvertString(htmlInput)
