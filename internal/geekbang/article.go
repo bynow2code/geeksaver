@@ -70,7 +70,7 @@ func GetArticle(articleReq ArticleReq) (*ArticleResp, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Origin", "https://time.geekbang.org")
-	req.Header.Set("User-Agent", "")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0")
 
 	cfg := config.GetConfig()
 	req.AddCookie(&http.Cookie{

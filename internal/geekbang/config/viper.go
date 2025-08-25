@@ -42,27 +42,3 @@ func WriteConfig(config *Config) error {
 	}
 	return nil
 }
-
-// ReadInConfig 读取配置文件
-func ReadInConfig() error {
-	err := v.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Unmarshal 绑定配置到全局配置实例
-func Unmarshal() error {
-	err := v.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	if err = v.Unmarshal(GetConfig()); err != nil {
-		return err
-	}
-
-	return nil
-}
