@@ -28,10 +28,10 @@
     ```
 
 2. ### 从 Releases 页面下载二进制文件（适合无 Go 环境的用户）
-    1. 访问项目 GitHub 仓库的「Releases」页面；
-    2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
-       `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
-    3. 解压压缩包，将得到的二进制文件（如 `geeksaver` 或 `geeksaver.exe`）添加到系统环境变量，或直接在解压目录通过终端调用。
+   1. 访问项目 GitHub 仓库的「Releases」页面；
+   2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
+      `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
+   3. 解压压缩包，将得到的二进制文件（如 `geeksaver` 或 `geeksaver.exe`）添加到系统环境变量，或直接在解压目录通过终端调用。
 
 ## 完整使用步骤
 
@@ -58,7 +58,7 @@
     - 提取的课程 ID：100029501（即 URL 中 intro/ 后的数字串）
 
 4. #### 转换并保存课程为 Markdown
-   工具会自动爬取课程所有章节内容，转换为 Markdown 格式后保存到本地，默认保存路径为 `$HOME/geek-docs`（Windows 系统路径为
+   工具会自动下载课程所有章节内容，转换为 Markdown 格式后保存到本地，默认保存路径为 `$HOME/geek-docs`（Windows 系统路径为
    `C:\Users\你的用户名\geek-docs`）。
 
 5. #### 打开并阅读课程文档
