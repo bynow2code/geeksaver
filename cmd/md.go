@@ -138,9 +138,7 @@ func (p *MdProcessor) getOutline() error {
 func (p *MdProcessor) saveArticle() error {
 	for _, outline := range p.outlineResp.Data.List {
 		// 进度条
-		progressBar := progressbar.NewOptions(3,
-			progressbar.OptionShowCount(),
-		)
+		progressBar := progressbar.NewOptions(3)
 
 		// 获取文章内容
 		progressBar.Describe("获取文章内容")
@@ -181,11 +179,14 @@ func (p *MdProcessor) saveArticle() error {
 		}
 
 		//保存 md 完成，进度->3
+		progressBar.Describe(fmt.Sprintf("%d|%s", articleResp.Data.Id, articleResp.Data.ArticleTitle))
 		err = progressBar.Add(1)
 		if err != nil {
 			return err
 		}
 
+		// 换行
+		fmt.Println()
 	}
 
 	return nil
