@@ -9,6 +9,7 @@ md          极客时间课程转 Markdown 并本地保存
 ```
 ### 使用方法
 1. #### 先设置登陆态
+在极客时间网页登陆完之后，打开f12，接着点击：应用程序 -> Cookie，就获取 GCID 和 GCESS 了
 ```shell
   geek-saver login --gcid 123456 --gcess abcdefg
 ```
