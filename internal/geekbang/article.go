@@ -45,12 +45,13 @@ func (a *ArticleRespError) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// 处理结构体情况
-	var tmp ArticleRespError
+	// 处理结构体情况（使用中间类型，不会触发当前的 UnmarshalJSON，防止栈溢出）
+	type tmpArticleRespError ArticleRespError
+	var tmp tmpArticleRespError
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
 	}
-	*a = tmp
+	*a = ArticleRespError(tmp)
 
 	return nil
 }
