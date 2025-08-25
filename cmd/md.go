@@ -222,6 +222,9 @@ func (p *MdProcessor) saveMdArticle(article *geekbang.ArticleResp, mdString stri
 
 // 创建 summary.md
 func (p *MdProcessor) createMdSummary() error {
+	// 进度条
+	progressBar := progressbar.Default(1, "创建课程 summary.md")
+
 	cfg := config.GetConfig()
 	summaryFile := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
 	file, err := os.OpenFile(summaryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
@@ -236,5 +239,11 @@ func (p *MdProcessor) createMdSummary() error {
 			return err
 		}
 	}
+
+	err = progressBar.Finish()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
