@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/bynow2code/geekbangdocsaver/internal/geekbang"
@@ -197,7 +199,11 @@ func (p *MdProcessor) saveArticle() error {
 		}
 
 		// 换行
-		fmt.Println()
+		fmt.Println("请稍等...")
+
+		// 延迟 1-1.5 秒（随机波动）
+		delay := time.Second + time.Duration(rand.Intn(500))*time.Millisecond
+		time.Sleep(delay)
 	}
 
 	return nil
