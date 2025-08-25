@@ -22,8 +22,7 @@ var loginCmd = &cobra.Command{
 		config.SetGCESS(gcess)
 
 		// 持久化到配置文件
-		newConfig := config.GetConfig()
-		err := config.WriteConfig(newConfig)
+		err := config.WriteConfig(config.GetConfig())
 		if err != nil {
 			log.Fatalln(err)
 		}
