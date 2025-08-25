@@ -70,8 +70,7 @@ type MdProcessor struct {
 // 获取课程信息
 func (p *MdProcessor) getCourse() error {
 	// 进度条
-	progressBar := progressbar.NewOptions(1)
-	progressBar.Describe("获取课程信息")
+	progressBar := progressbar.Default(1, "获取课程信息")
 
 	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
@@ -99,8 +98,7 @@ func (p *MdProcessor) getCourse() error {
 // 获取课表
 func (p *MdProcessor) getOutline() error {
 	// 进度条
-	progressBar := progressbar.NewOptions(1)
-	progressBar.Describe("获取课表信息")
+	progressBar := progressbar.Default(1, "获取课表信息")
 
 	// 请求 api
 	outlineResp, err := geekbang.GetOutline(geekbang.OutlineReq{
@@ -150,7 +148,7 @@ func (p *MdProcessor) getOutline() error {
 func (p *MdProcessor) saveArticle() error {
 	for _, outline := range p.outlineResp.Data.List {
 		// 进度条
-		progressBar := progressbar.NewOptions(3)
+		progressBar := progressbar.Default(3)
 
 		// 获取文章内容
 		progressBar.Describe("获取文章内容")
@@ -185,7 +183,7 @@ func (p *MdProcessor) saveArticle() error {
 
 		// 保存 md
 		progressBar.Describe("保存 markdown 文件")
-		err = p.saveMdArticle(articleResp, mdString)
+		err = p.createMdArticle(articleResp, mdString)
 		if err != nil {
 			return err
 		}
@@ -205,7 +203,7 @@ func (p *MdProcessor) saveArticle() error {
 }
 
 // 保存文章 md
-func (p *MdProcessor) saveMdArticle(article *geekbang.ArticleResp, mdString string) error {
+func (p *MdProcessor) createMdArticle(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
 	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
@@ -236,8 +234,7 @@ func (p *MdProcessor) saveMdArticle(article *geekbang.ArticleResp, mdString stri
 // 创建 summary.md
 func (p *MdProcessor) createMdSummary() error {
 	// 进度条
-	progressBar := progressbar.NewOptions(1)
-	progressBar.Describe("创建课程 summary.md")
+	progressBar := progressbar.Default(1, "创建课程 summary.md")
 
 	cfg := config.GetConfig()
 	summaryFile := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
