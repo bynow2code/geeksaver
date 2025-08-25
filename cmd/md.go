@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/bynow2code/geekbangdocsaver/internal/geekbang"
@@ -243,11 +244,15 @@ func (p *MdProcessor) createMdSummary() error {
 	}
 	defer file.Close()
 
+	var content strings.Builder
 	for _, outline := range p.outlineResp.Data.List {
-		_, err = file.WriteString(fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id))
-		if err != nil {
-			return err
-		}
+		line := fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id)
+		content.WriteString(line)
+	}
+
+	_, err = file.WriteString(content.String())
+	if err != nil {
+		return err
 	}
 
 	err = progressBar.Finish()
