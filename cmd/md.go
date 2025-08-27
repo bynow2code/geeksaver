@@ -157,7 +157,7 @@ func (p *MdProcessor) saveArticle() error {
 		// 进度条
 		progressBar := progressbar.Default(3, "获取文章内容")
 
-		// 获取文章内容
+		// 开始获取文章内容
 		articleResp, err := geekbang.GetArticle(geekbang.ArticleReq{
 			Id:               strconv.Itoa(outline.Id),
 			IncludeNeighbors: true,
@@ -173,7 +173,7 @@ func (p *MdProcessor) saveArticle() error {
 			return err
 		}
 
-		// 转换为 md
+		// 开始转换为 md
 		progressBar.Describe("转换为 markdown 格式")
 		htmlInput := fmt.Sprintf("<h1>%s</h1>", articleResp.Data.ArticleTitle)
 		htmlInput += articleResp.Data.ArticleContent
@@ -188,7 +188,7 @@ func (p *MdProcessor) saveArticle() error {
 			return err
 		}
 
-		// 保存 md
+		// 开始保存 md
 		progressBar.Describe("保存 markdown 文件")
 		err = p.createMdArticle(articleResp, mdString)
 		if err != nil {
