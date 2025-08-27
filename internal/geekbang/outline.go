@@ -74,7 +74,7 @@ func GetOutline(outlineReq OutlineReq) (*OutlineResp, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := GetClient().Do(req)
+	resp, err := GetClient().do(req)
 	if err != nil {
 		return nil, err
 	}
