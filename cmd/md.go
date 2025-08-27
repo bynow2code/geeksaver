@@ -50,7 +50,7 @@ var mdCmd = &cobra.Command{
 		}
 
 		// 生成 SUMMARY 文件
-		err = processor.createSummary()
+		err = processor.saveSummary()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -240,7 +240,7 @@ func (p *mdProcessor) saveArticle(article *geekbang.ArticleResp, mdString string
 }
 
 // 创建 summary.md
-func (p *mdProcessor) createSummary() error {
+func (p *mdProcessor) saveSummary() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "创建课程 summary.md")
 
