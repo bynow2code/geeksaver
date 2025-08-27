@@ -29,7 +29,7 @@ var mdCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		processor := &MdProcessor{cid: cid}
+		processor := &mdProcessor{cid: cid}
 
 		// 获取课程信息
 		err = processor.getCourse()
@@ -68,14 +68,14 @@ func init() {
 	rootCmd.AddCommand(mdCmd)
 }
 
-type MdProcessor struct {
+type mdProcessor struct {
 	cid         string                // 课程id
 	courseResp  *geekbang.CourseResp  // 课程响应体
 	outlineResp *geekbang.OutlineResp // 课表响应体
 }
 
 // 获取课程信息
-func (p *MdProcessor) getCourse() error {
+func (p *mdProcessor) getCourse() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "获取课程信息")
 
@@ -103,7 +103,7 @@ func (p *MdProcessor) getCourse() error {
 }
 
 // 获取课表
-func (p *MdProcessor) getOutline() error {
+func (p *mdProcessor) getOutline() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "获取课表信息")
 
@@ -152,7 +152,7 @@ func (p *MdProcessor) getOutline() error {
 }
 
 // 保存文章
-func (p *MdProcessor) saveArticle() error {
+func (p *mdProcessor) saveArticle() error {
 	for _, outline := range p.outlineResp.Data.List {
 		// 进度条
 		progressBar := progressbar.Default(3, "获取文章内容")
@@ -211,7 +211,7 @@ func (p *MdProcessor) saveArticle() error {
 }
 
 // 保存文章 Markdown
-func (p *MdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString string) error {
+func (p *mdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
 	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
@@ -240,7 +240,7 @@ func (p *MdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString st
 }
 
 // 创建 summary.md
-func (p *MdProcessor) createSummaryMd() error {
+func (p *mdProcessor) createSummaryMd() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "创建课程 summary.md")
 
