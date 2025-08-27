@@ -50,7 +50,7 @@ var mdCmd = &cobra.Command{
 		}
 
 		// 生成 SUMMARY 文件
-		err = processor.createMdSummary()
+		err = processor.createSummaryMd()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -190,7 +190,7 @@ func (p *MdProcessor) saveArticle() error {
 
 		// 开始保存 md
 		progressBar.Describe("保存 markdown 文件")
-		err = p.createMdArticle(articleResp, mdString)
+		err = p.createArticleMd(articleResp, mdString)
 		if err != nil {
 			return err
 		}
@@ -210,8 +210,8 @@ func (p *MdProcessor) saveArticle() error {
 	return nil
 }
 
-// 保存文章 md
-func (p *MdProcessor) createMdArticle(article *geekbang.ArticleResp, mdString string) error {
+// 保存文章 Markdown
+func (p *MdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
 	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
@@ -240,7 +240,7 @@ func (p *MdProcessor) createMdArticle(article *geekbang.ArticleResp, mdString st
 }
 
 // 创建 summary.md
-func (p *MdProcessor) createMdSummary() error {
+func (p *MdProcessor) createSummaryMd() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "创建课程 summary.md")
 
