@@ -24,24 +24,24 @@ type MdConfig struct {
 }
 
 // 全局配置实例
-var config *Config
+var defaultConfig *Config
 
 func init() {
-	config = &Config{}
-	config.Md.SavePath = os.ExpandEnv(DefaultMdSavePath)
+	defaultConfig = &Config{}
+	defaultConfig.Md.SavePath = os.ExpandEnv(DefaultMdSavePath)
 }
 
 // SetGCID 设置用户id
 func SetGCID(gcid string) {
-	config.User.GCID = gcid
+	defaultConfig.User.GCID = gcid
 }
 
 // SetGCESS 设置用户令牌
 func SetGCESS(gcess string) {
-	config.User.GCESS = gcess
+	defaultConfig.User.GCESS = gcess
 }
 
 // GetConfig 获取全局配置
 func GetConfig() *Config {
-	return config
+	return defaultConfig
 }

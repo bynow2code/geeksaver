@@ -57,7 +57,7 @@ func GetCourse(courseReq CourseReq) (*CourseResp, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := GetClient().do(req)
+	resp, err := getClient().do(req)
 	if err != nil {
 		return nil, err
 	}

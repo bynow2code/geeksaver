@@ -11,16 +11,16 @@ const (
 	DefaultConfigFile = "$HOME/geek-saver.yml" // 默认程序配置文件
 )
 
-var v *viper.Viper
+var defaultViper *viper.Viper
 
 func init() {
-	v = viper.New()
-	v.SetConfigFile(os.ExpandEnv(DefaultConfigFile))
+	defaultViper = viper.New()
+	defaultViper.SetConfigFile(os.ExpandEnv(DefaultConfigFile))
 }
 
 // GetViper 返回 viper 实例
 func GetViper() *viper.Viper {
-	return v
+	return defaultViper
 }
 
 // WriteConfig 写入程序配置文件
@@ -31,12 +31,12 @@ func WriteConfig(config *Config) error {
 		return err
 	}
 
-	err = v.MergeConfigMap(cfgMap)
+	err = defaultViper.MergeConfigMap(cfgMap)
 	if err != nil {
 		return err
 	}
 
-	err = v.WriteConfig()
+	err = defaultViper.WriteConfig()
 	if err != nil {
 		return err
 	}
