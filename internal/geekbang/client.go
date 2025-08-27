@@ -8,13 +8,13 @@ import (
 )
 
 type Client struct {
-	httpClient *http.Client
+	*http.Client
 }
 
 // 发起 http 请求
 func (c *Client) do(req *http.Request) (*http.Response, error) {
 	buildCommonReqParams(req)
-	return c.httpClient.Do(req)
+	return c.Do(req)
 }
 
 // 构建通用 req 参数
@@ -33,17 +33,17 @@ func buildCommonReqParams(req *http.Request) {
 	})
 }
 
-// http client
-var client *Client
+// http geekClient
+var geekClient *Client
 
 func init() {
-	client = &Client{}
+	geekClient = &Client{}
 	transport := &http.Transport{
 		MaxConnsPerHost:       4,               // 对单个主机最多x个并发连接
 		ResponseHeaderTimeout: 5 * time.Second, // 响应头超时
 	}
 
-	client.httpClient = &http.Client{
+	geekClient.Client = &http.Client{
 		Timeout:   10 * time.Second,
 		Transport: transport,
 	}
@@ -51,5 +51,5 @@ func init() {
 
 // GetClient 返回客户端实例
 func GetClient() *Client {
-	return client
+	return geekClient
 }
