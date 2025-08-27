@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/bynow2code/geeksaver/internal/geekbang/config"
 )
 
 // OutlineReq 课表请求体
@@ -75,18 +73,6 @@ func GetOutline(outlineReq OutlineReq) (*OutlineResp, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Origin", "https://time.geekbang.org")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0")
-
-	cfg := config.GetConfig()
-	req.AddCookie(&http.Cookie{
-		Name:  "GCID",
-		Value: cfg.User.GCID,
-	})
-	req.AddCookie(&http.Cookie{
-		Name:  "GCESS",
-		Value: cfg.User.GCESS,
-	})
 
 	resp, err := GetClient().Do(req)
 	if err != nil {
