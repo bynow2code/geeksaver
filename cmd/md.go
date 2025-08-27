@@ -44,13 +44,13 @@ var mdCmd = &cobra.Command{
 		}
 
 		// 保存文章内容
-		err = processor.saveArticle()
+		err = processor.getArticle()
 		if err != nil {
 			log.Fatalln(err)
 		}
 
 		// 生成 SUMMARY 文件
-		err = processor.createSummaryMd()
+		err = processor.createSummary()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -152,7 +152,7 @@ func (p *mdProcessor) getOutline() error {
 }
 
 // 保存文章
-func (p *mdProcessor) saveArticle() error {
+func (p *mdProcessor) getArticle() error {
 	for _, outline := range p.outlineResp.Data.List {
 		// 进度条
 		progressBar := progressbar.Default(3, "获取文章内容")
@@ -190,7 +190,7 @@ func (p *mdProcessor) saveArticle() error {
 
 		// 开始保存 md
 		progressBar.Describe("保存 markdown 文件")
-		err = p.createArticleMd(articleResp, mdString)
+		err = p.saveArticle(articleResp, mdString)
 		if err != nil {
 			return err
 		}
@@ -211,7 +211,7 @@ func (p *mdProcessor) saveArticle() error {
 }
 
 // 保存文章 Markdown
-func (p *mdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString string) error {
+func (p *mdProcessor) saveArticle(article *geekbang.ArticleResp, mdString string) error {
 	// 创建文件夹
 	cfg := config.GetConfig()
 	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
@@ -240,7 +240,7 @@ func (p *mdProcessor) createArticleMd(article *geekbang.ArticleResp, mdString st
 }
 
 // 创建 summary.md
-func (p *mdProcessor) createSummaryMd() error {
+func (p *mdProcessor) createSummary() error {
 	// 进度条
 	progressBar := progressbar.Default(1, "创建课程 summary.md")
 
