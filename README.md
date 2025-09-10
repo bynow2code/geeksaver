@@ -15,7 +15,7 @@
 
 ## 安装方式
 
-1. ### 使用 go install 安装（推荐，适合有 Go 环境的用户）
+1. ### 使用 go install 安装（适合有 Go 环境的用户，无版本信息）
 
    默认安装路径为系统 `GOPATH/bin` 目录，若已将该路径添加到系统环境变量，可直接全局调用工具。
 
@@ -26,14 +26,11 @@
     # 安装 geeksaver
     go install github.com/bynow2code/geeksaver@latest
     
-    # 验证安装成功
-    geeksaver version
-   
     # 查看当前配置
     geeksaver config
     ```
 
-2. ### 从 Releases 页面下载二进制文件（适合无 Go 环境的用户）
+2. ### 从 Releases 页面下载二进制文件（推荐，适合无 Go 环境的用户，包含版本信息）
     1. 访问项目 GitHub 仓库的「Releases」页面；
     2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
        `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
