@@ -1,4 +1,5 @@
 # geeksaver
+[![Release](https://github.com/bynow2code/geeksaver/actions/workflows/release.yml/badge.svg)](https://github.com/bynow2code/geeksaver/actions/workflows/release.yml)
 
 该工具仅供学习使用，可将已购买的极客时间课程保存为本地 Markdown 文档，并借助 AI 总结能力梳理内容，方便后续学习与复习。
 
