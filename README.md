@@ -1,15 +1,17 @@
 # geeksaver
+
 [![Release](https://github.com/bynow2code/geeksaver/actions/workflows/release.yml/badge.svg)](https://github.com/bynow2code/geeksaver/actions/workflows/release.yml)
 
 该工具仅供学习使用，可将已购买的极客时间课程保存为本地 Markdown 文档，并借助 AI 总结能力梳理内容，方便后续学习与复习。
 
 ## 支持的命令
 
-| 命令     | 功能描述                           |
-|--------|--------------------------------|
-| login  | 配置极客时间登录状态（设置 GCID/GCESS）      |
-| config | 查看当前工具的配置信息（含登录态、保存路径等）        |
-| md     | 将指定极客时间课程转换为 Markdown 格式并保存到本地 |
+| 命令      | 功能描述                           |
+|---------|--------------------------------|
+| login   | 配置极客时间登录状态（设置 GCID/GCESS）      |
+| config  | 查看当前工具的配置信息（含登录态、保存路径等）        |
+| md      | 将指定极客时间课程转换为 Markdown 格式并保存到本地 |
+| version | 输出当前版本                         |
 
 ## 安装方式
 
@@ -25,14 +27,17 @@
     go install github.com/bynow2code/geeksaver@latest
     
     # 验证安装成功
-    geeksaver config
+    geeksaver version
+   
+    # 查看当前配置
+    geeksaver version
     ```
 
 2. ### 从 Releases 页面下载二进制文件（适合无 Go 环境的用户）
-   1. 访问项目 GitHub 仓库的「Releases」页面；
-   2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
-      `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
-   3. 解压压缩包，将得到的二进制文件（如 `geeksaver` 或 `geeksaver.exe`）添加到系统环境变量，或直接在解压目录通过终端调用。
+    1. 访问项目 GitHub 仓库的「Releases」页面；
+    2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
+       `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
+    3. 解压压缩包，将得到的二进制文件（如 `geeksaver` 或 `geeksaver.exe`）添加到系统环境变量，或直接在解压目录通过终端调用。
 
 ## 完整使用步骤
 
@@ -47,7 +52,7 @@
     geeksaver login --gcid "你的GCID值（如：abc123xyz）" --gcess "你的GCESS值（如：def456uvw）"
     ```
 
-2. #### 检查配置信息（确认登录态是否生效）
+2. #### 检查配置信息（确认登录态信息是否正确）
    执行命令查看当前配置，确认登陆信息和保存路径等信息是否正确：
     ```
     geeksaver config
