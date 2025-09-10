@@ -1,7 +1,7 @@
 # 工作流的名称。GitHub会在仓库的“Actions”标签下显示你的工作流名称
-name: release
+name: Release ${{ github.ref_name }}
 # 工作流运行的名称
-run-name: release to ${{ github.ref_name }} by @${{ github.actor }}
+run-name: Release ${{ github.ref_name }} by @${{ github.actor }}
 # 定义如何触发工作流
 on:
   # 手动触发工作流时
@@ -34,29 +34,29 @@ jobs:
           go-version: stable
 
       - name: 编译项目
-        run: >
+        run: |
           # 创建输出目录
           mkdir -p dist
           
           # 打包后文件命名格式： [项目名]-[版本号]-[操作系统]-[架构].[扩展名]
           # 编译 Linux amd64 版本
-          GOOS=linux GOARCH=amd64 go build -o  dist/geeksaver-v0.0.1-linux-amd64 ./main.go
+          GOOS=linux GOARCH=amd64 go build -o  dist/geeksaver-${{ github.ref_name }}-linux-amd64 ./main.go
           # 编译 Windows amd64 版本
-          GOOS=windows GOARCH=amd64 go build -o  dist/geeksaver-v0.0.1-windows-amd64.exe ./main.go
+          GOOS=windows GOARCH=amd64 go build -o  dist/geeksaver-${{ github.ref_name }}-windows-amd64.exe ./main.go
           # 编译 macOS amd64 版本
-          GOOS=darwin GOARCH=amd64 go build -o  dist/geeksaver-v0.0.1-macos-amd64 ./main.go
+          GOOS=darwin GOARCH=amd64 go build -o  dist/geeksaver-${{ github.ref_name }}-macos-amd64 ./main.go
           # 编译 macOS arm64 版本
-          GOOS=darwin GOARCH=arm64 go build -o  dist/geeksaver-v0.0.1-macos-arm64 ./main.go
+          GOOS=darwin GOARCH=arm64 go build -o  dist/geeksaver-${{ github.ref_name }}-macos-arm64 ./main.go
 
       - name: 创建 Github Release
         uses: ncipollo/release-action@v1
         with:
           tag: "v0.01"
-          artifacts: >
-            dist/geeksaver-v0.0.1-linux-amd64,
-            dist/geeksaver-v0.0.1-windows-amd64.exe,
-            dist/geeksaver-v0.0.1-macos-amd64,
-            dist/geeksaver-v0.0.1-macos-arm64
+          artifacts: |
+            dist/geeksaver-${{ github.ref_name }}-linux-amd64,
+            dist/geeksaver-${{ github.ref_name }}-windows-amd64.exe,
+            dist/geeksaver-${{ github.ref_name }}-macos-amd64,
+            dist/geeksaver-${{ github.ref_name }}-macos-arm64
 
 #          bodyFile: "body.md"
 
