@@ -30,7 +30,7 @@
     geeksaver config
     ```
 
-2. ### 从 Releases 页面下载二进制文件（推荐，适合无 Go 环境的用户，包含版本信息）
+2. ### 从 Releases 页面下载二进制文件（推荐，包含版本信息）
     1. 访问项目 GitHub 仓库的「Releases」页面；
     2. 根据本地操作系统（Windows/macOS/Linux）和硬件架构（amd64/arm64），下载对应的二进制压缩包（如
        `geeksaver-darwin-amd64.tar.gz` 对应 macOS 64 位系统）；
