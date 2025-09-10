@@ -11,7 +11,7 @@
 | login   | 配置极客时间登录状态（设置 GCID/GCESS）      |
 | config  | 查看当前工具的配置信息（含登录态、保存路径等）        |
 | md      | 将指定极客时间课程转换为 Markdown 格式并保存到本地 |
-| version | 输出当前版本                         |
+| version | 输出版本信息                         |
 
 ## 安装方式
 
@@ -30,7 +30,7 @@
     geeksaver version
    
     # 查看当前配置
-    geeksaver version
+    geeksaver config
     ```
 
 2. ### 从 Releases 页面下载二进制文件（适合无 Go 环境的用户）
