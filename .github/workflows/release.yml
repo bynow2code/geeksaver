@@ -34,7 +34,7 @@ jobs:
           go-version: stable
 
       - name: 编译项目
-        run:
+        run: >
           # 创建输出目录
           mkdir -p dist
           
