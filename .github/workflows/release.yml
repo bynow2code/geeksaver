@@ -52,7 +52,12 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: "v0.01"
-          artifacts: "dist/*"
+          artifacts: >
+            dist/geeksaver-v0.0.1-linux-amd64,
+            dist/geeksaver-v0.0.1-windows-amd64.exe,
+            dist/geeksaver-v0.0.1-macos-amd64,
+            dist/geeksaver-v0.0.1-macos-arm64
+
 #          bodyFile: "body.md"
 
 
