@@ -8,6 +8,7 @@ on:
   push:
     tags:
       - v*
+        
 jobs:
   # 作业 id
   release:
@@ -18,11 +19,12 @@ jobs:
     permissions:
       # 允许操作创建发布
       contents: write
-    #步骤
+
+    # 步骤
     steps:
-      #步骤名称
+      # 步骤名称
       - name: 切分支
-        #引用 GitHub Actions 市场中的 Action see:https://github.com/marketplace?type=actions
+        # 引用 GitHub Actions 市场中的 Action see:https://github.com/marketplace?type=actions
         uses: actions/checkout@main
 
       - name: 安装 go 环境
@@ -50,6 +52,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: "v0.01"
+          name: Release ${{ github.ref_name }}
           artifacts: >
             dist/geeksaver-${{ github.ref_name }}-linux-amd64,
             dist/geeksaver-${{ github.ref_name }}-windows-amd64.exe,
