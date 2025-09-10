@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-go@v6
         with:
           # 使用 go 最新的稳定版本
-          go-version: 'stable'
+          go-version: stable
 
       - name: 编译项目
         run:
