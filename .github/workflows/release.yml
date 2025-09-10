@@ -40,21 +40,24 @@ jobs:
 
           # 打包后文件命名格式： [项目名]-[版本号]-[操作系统]-[架构].[扩展名]
           # 编译 Linux amd64 版本
-          GOOS=linux GOARCH=amd64 go build -o dist/geeksaver-${{ github.ref_name }}-linux-amd64 ./main.go
+          GOOS=linux GOARCH=amd64 go build -ldflags "-X cmd.version=${{ github.ref_name }}" -o dist/geeksaver-${{ github.ref_name }}-linux-amd64 ./main.go
           # 编译 Windows amd64 版本
-          GOOS=windows GOARCH=amd64 go build -o dist/geeksaver-${{ github.ref_name }}-windows-amd64.exe ./main.go
+          GOOS=windows GOARCH=amd64 go build -ldflags "-X cmd.version=${{ github.ref_name }}" -o dist/geeksaver-${{ github.ref_name }}-windows-amd64.exe ./main.go
           # 编译 macOS amd64 版本
-          GOOS=darwin GOARCH=amd64 go build -o dist/geeksaver-${{ github.ref_name }}-macos-amd64 ./main.go
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-X cmd.version=${{ github.ref_name }}" -o dist/geeksaver-${{ github.ref_name }}-macos-amd64 ./main.go
           # 编译 macOS arm64 版本
-          GOOS=darwin GOARCH=arm64 go build -o dist/geeksaver-${{ github.ref_name }}-macos-arm64 ./main.go
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-X cmd.version=${{ github.ref_name }}" -o dist/geeksaver-${{ github.ref_name }}-macos-arm64 ./main.go
 
       - name: 创建 Github Release
         uses: ncipollo/release-action@v1
         with:
-          tag: "v0.01"
+          # 触发工作流运行的分支或标记的短参考名称
+          tag: ${{ github.ref_name }}
+          # release title
           name: Release ${{ github.ref_name }}
+          # 上传打包后的文件
           artifacts: dist/geeksaver-*
-
-#          bodyFile: "body.md"
+          # release 正文
+          #bodyFile: "body.md"
 
 
