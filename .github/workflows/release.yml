@@ -1,5 +1,5 @@
 # 工作流的名称。GitHub会在仓库的“Actions”标签下显示你的工作流名称
-name: Release ${{ github.ref_name }}
+name: Release
 # 工作流运行的名称
 run-name: Release ${{ github.ref_name }} by @${{ github.actor }}
 # 定义如何触发工作流
