@@ -6,7 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = "v0.0.1-alpha"
+const devVersion = "0.0.0-dev"
+
+// 默认值为开发版（go install 直接安装时的状态）
+var version = devVersion
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
