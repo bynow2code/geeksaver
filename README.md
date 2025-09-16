@@ -26,6 +26,8 @@
     
     # 安装 geeksaver
     go install github.com/bynow2code/geeksaver@latest
+    # 指定版本安装
+    go install github.com/bynow2code/geeksaver@v0.1.3
     
     # 查看当前配置
     geeksaver config
