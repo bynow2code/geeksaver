@@ -84,6 +84,7 @@ func (u *upgradeProcessor) checkForUpdate() error {
 		progressbar.OptionOnCompletion(func() {
 			fmt.Fprint(os.Stderr, "\n")
 		}),
+		progressbar.OptionSetRenderBlankState(true),
 	)
 
 	// 获取最新版本信息
@@ -204,6 +205,7 @@ func (u *upgradeProcessor) upgrade() error {
 		progressbar.OptionOnCompletion(func() {
 			fmt.Fprint(os.Stderr, "\n")
 		}),
+		progressbar.OptionSetRenderBlankState(true),
 	)
 
 	// 匹配升级文件下载地址
