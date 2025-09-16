@@ -77,7 +77,19 @@ func doMd(cmd *cobra.Command) {
 
 // 获取课程信息
 func (p *mdProcessor) getCourse() error {
-	bar := progressbar.Default(1, "获取课程信息")
+	bar := progressbar.NewOptions(1,
+		progressbar.OptionSetDescription("获取课程信息"),
+		progressbar.OptionShowBytes(false),
+		progressbar.OptionFullWidth(),
+		progressbar.OptionSetTheme(progressbar.Theme{}),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progressbar.OptionSetRenderBlankState(true),
+		progressbar.OptionSetElapsedTime(true),
+		progressbar.OptionSetPredictTime(true),
+		progressbar.OptionShowElapsedTimeOnFinish(),
+	)
 
 	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
@@ -101,7 +113,19 @@ func (p *mdProcessor) getCourse() error {
 
 // 获取课表
 func (p *mdProcessor) getOutline() error {
-	bar := progressbar.Default(1, "获取课表信息")
+	bar := progressbar.NewOptions(1,
+		progressbar.OptionSetDescription("获取课表信息"),
+		progressbar.OptionShowBytes(false),
+		progressbar.OptionFullWidth(),
+		progressbar.OptionSetTheme(progressbar.Theme{}),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progressbar.OptionSetRenderBlankState(true),
+		progressbar.OptionSetElapsedTime(true),
+		progressbar.OptionSetPredictTime(true),
+		progressbar.OptionShowElapsedTimeOnFinish(),
+	)
 
 	var err error
 	p.outlineResp, err = geekbang.GetOutline(geekbang.OutlineReq{
@@ -145,7 +169,20 @@ func (p *mdProcessor) getOutline() error {
 // 保存文章
 func (p *mdProcessor) articleHandle() error {
 	for _, outline := range p.outlineResp.Data.List {
-		bar := progressbar.Default(3, "获取文章内容")
+		bar := progressbar.NewOptions(3,
+			progressbar.OptionSetDescription("获取文章内容"),
+			progressbar.OptionShowBytes(false),
+			progressbar.OptionFullWidth(),
+			progressbar.OptionSetTheme(progressbar.Theme{}),
+			progressbar.OptionOnCompletion(func() {
+				fmt.Fprint(os.Stderr, "\n")
+			}),
+			progressbar.OptionSetRenderBlankState(true),
+			progressbar.OptionShowCount(),
+			progressbar.OptionSetElapsedTime(true),
+			progressbar.OptionSetPredictTime(true),
+			progressbar.OptionShowElapsedTimeOnFinish(),
+		)
 
 		// 获取文章内容
 		articleResp, err := geekbang.GetArticle(geekbang.ArticleReq{
@@ -221,7 +258,19 @@ func (p *mdProcessor) saveArticle(article *geekbang.ArticleResp, mdString string
 
 // 创建 summary.md
 func (p *mdProcessor) saveSummary() error {
-	bar := progressbar.Default(1, "创建课程 summary.md")
+	bar := progressbar.NewOptions(1,
+		progressbar.OptionSetDescription("创建课程 summary.md"),
+		progressbar.OptionShowBytes(false),
+		progressbar.OptionFullWidth(),
+		progressbar.OptionSetTheme(progressbar.Theme{}),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progressbar.OptionSetRenderBlankState(true),
+		progressbar.OptionSetElapsedTime(true),
+		progressbar.OptionSetPredictTime(true),
+		progressbar.OptionShowElapsedTimeOnFinish(),
+	)
 
 	// 创建 summary.md 文件
 	cfg := config.GetConfig()
