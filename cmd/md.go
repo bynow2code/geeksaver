@@ -23,45 +23,15 @@ var mdCmd = &cobra.Command{
 	Short: "极客时间课程转 Markdown 并本地保存",
 	Long:  fmt.Sprintf("极客时间课程转 Markdown 并本地保存，默认保存路径：%s", config.DefaultMdSavePath),
 	Run: func(cmd *cobra.Command, args []string) {
-		// 获取参数
-		cid, err := cmd.Flags().GetString("cid")
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		processor := &mdProcessor{cid: cid}
-
-		// 获取课程信息
-		err = processor.getCourse()
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// 获取课表信息
-		err = processor.getOutline()
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// 保存文章内容
-		err = processor.getArticle()
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// 生成 SUMMARY 文件
-		err = processor.saveSummary()
-		if err != nil {
-			log.Fatalln(err)
-		}
+		doMd(cmd)
 	},
 }
 
 func init() {
 	mdCmd.Flags().String("cid", "", "课程id（必填）")
 
-	err := mdCmd.MarkFlagRequired("cid")
-	if err != nil {
+	// 必填参数校验
+	if err := mdCmd.MarkFlagRequired("cid"); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -74,28 +44,55 @@ type mdProcessor struct {
 	outlineResp *geekbang.OutlineResp // 课表响应体
 }
 
+// 创建 markdown
+func doMd(cmd *cobra.Command) {
+	// 获取参数
+	cid, err := cmd.Flags().GetString("cid")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	processor := &mdProcessor{cid: cid}
+
+	// 获取课程信息
+	if err := processor.getCourse(); err != nil {
+		log.Fatalln(err)
+	}
+
+	// 获取课表信息
+	if err := processor.getOutline(); err != nil {
+		log.Fatalln(err)
+	}
+
+	// 保存文章md
+	if err := processor.articleHandle(); err != nil {
+		log.Fatalln(err)
+	}
+
+	// 生成 SUMMARY 文件
+	if err := processor.saveSummary(); err != nil {
+		log.Fatalln(err)
+	}
+}
+
 // 获取课程信息
 func (p *mdProcessor) getCourse() error {
-	// 进度条
-	progressBar := progressbar.Default(1, "获取课程信息")
+	bar := progressbar.Default(1, "获取课程信息")
 
 	productId, err := strconv.Atoi(p.cid)
 	if err != nil {
 		return err
 	}
 
-	courseResp, err := geekbang.GetCourse(geekbang.CourseReq{
+	p.courseResp, err = geekbang.GetCourse(geekbang.CourseReq{
 		ProductId:            int64(productId),
 		WithRecommendArticle: false,
 	})
 	if err != nil {
 		return err
 	}
-	p.courseResp = courseResp
 
-	// 进度条满
-	err = progressBar.Finish()
-	if err != nil {
+	if err := bar.Finish(); err != nil {
 		return err
 	}
 
@@ -104,11 +101,10 @@ func (p *mdProcessor) getCourse() error {
 
 // 获取课表
 func (p *mdProcessor) getOutline() error {
-	// 进度条
-	progressBar := progressbar.Default(1, "获取课表信息")
+	bar := progressbar.Default(1, "获取课表信息")
 
-	// 请求 api
-	outlineResp, err := geekbang.GetOutline(geekbang.OutlineReq{
+	var err error
+	p.outlineResp, err = geekbang.GetOutline(geekbang.OutlineReq{
 		Cid:    p.cid,
 		Size:   500,
 		Prev:   0,
@@ -118,33 +114,28 @@ func (p *mdProcessor) getOutline() error {
 	if err != nil {
 		return err
 	}
-	p.outlineResp = outlineResp
 
-	// 进度条满
-	err = progressBar.Finish()
-	if err != nil {
+	if err := bar.Finish(); err != nil {
 		return err
 	}
 
 	// 组装 table 数据
 	var data [][]string
-	for _, outline := range outlineResp.Data.List {
+	for _, outline := range p.outlineResp.Data.List {
 		data = append(data, []string{strconv.Itoa(outline.Id), outline.ArticleTitle})
 	}
 
-	// 添加 table 头部
 	table := tablewriter.NewWriter(os.Stdout)
+	// 添加 table 头部
 	table.Header([]string{"id", "课表名称"})
-
 	// 添加 table 数据
-	err = table.Bulk(data)
-	if err != nil {
+	if err := table.Bulk(data); err != nil {
 		return err
 	}
-
-	// 添加 table 脚部并渲染
-	table.Footer([]string{"total", strconv.Itoa(outlineResp.Data.Page.Count)})
-	if err = table.Render(); err != nil {
+	// 添加 table 脚部
+	table.Footer([]string{"total", strconv.Itoa(p.outlineResp.Data.Page.Count)})
+	// 渲染
+	if err := table.Render(); err != nil {
 		return err
 	}
 
@@ -152,12 +143,11 @@ func (p *mdProcessor) getOutline() error {
 }
 
 // 保存文章
-func (p *mdProcessor) getArticle() error {
+func (p *mdProcessor) articleHandle() error {
 	for _, outline := range p.outlineResp.Data.List {
-		// 进度条
-		progressBar := progressbar.Default(3, "获取文章内容")
+		bar := progressbar.Default(3, "获取文章内容")
 
-		// 开始获取文章内容
+		// 获取文章内容
 		articleResp, err := geekbang.GetArticle(geekbang.ArticleReq{
 			Id:               strconv.Itoa(outline.Id),
 			IncludeNeighbors: true,
@@ -166,39 +156,32 @@ func (p *mdProcessor) getArticle() error {
 		if err != nil {
 			return err
 		}
-
-		// 获取文章内容完成，进度->1
-		err = progressBar.Add(1)
-		if err != nil {
+		// 进度+1
+		if err := bar.Add(1); err != nil {
 			return err
 		}
 
 		// 开始转换为 md
-		progressBar.Describe("转换为 markdown 格式")
+		bar.Describe("转换为 markdown 格式")
 		htmlInput := fmt.Sprintf("<h1>%s</h1>", articleResp.Data.ArticleTitle)
 		htmlInput += articleResp.Data.ArticleContent
 		mdString, err := htmltomarkdown.ConvertString(htmlInput)
 		if err != nil {
 			return err
 		}
-
-		// 转换为 md 完成，进度->2
-		err = progressBar.Add(1)
-		if err != nil {
+		// 进度+1
+		if err := bar.Add(1); err != nil {
 			return err
 		}
 
-		// 开始保存 md
-		progressBar.Describe("保存 markdown 文件")
-		err = p.saveArticle(articleResp, mdString)
-		if err != nil {
+		// 保存 md
+		bar.Describe("保存 markdown 文件")
+		if err := p.saveArticle(articleResp, mdString); err != nil {
 			return err
 		}
-
-		//保存 md 完成，进度->3
-		progressBar.Describe(fmt.Sprintf("%d|%s", articleResp.Data.Id, articleResp.Data.ArticleTitle))
-		err = progressBar.Add(1)
-		if err != nil {
+		// 进度+1
+		bar.Describe(fmt.Sprintf("%d|%s", articleResp.Data.Id, articleResp.Data.ArticleTitle))
+		if err := bar.Add(1); err != nil {
 			return err
 		}
 
@@ -210,29 +193,26 @@ func (p *mdProcessor) getArticle() error {
 	return nil
 }
 
-// 保存文章 Markdown
+// 保存文章
 func (p *mdProcessor) saveArticle(article *geekbang.ArticleResp, mdString string) error {
-	// 创建文件夹
+	// 创建文章文件夹
 	cfg := config.GetConfig()
-	articleDir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
-	mdDir := path.Join(articleDir, "docs")
-	err := os.MkdirAll(mdDir, 0755)
-	if err != nil {
+	dir := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title)
+	saveDir := path.Join(dir, "docs")
+	if err := os.MkdirAll(saveDir, 0755); err != nil {
 		return err
 	}
 
 	// 创建 md 文件
-	mdName := fmt.Sprintf("%d.md", article.Data.Id)
-	mdFile := path.Join(mdDir, mdName)
-	file, err := os.OpenFile(mdFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	filename := path.Join(saveDir, fmt.Sprintf("%d.md", article.Data.Id))
+	newFile, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer newFile.Close()
 
 	// 写入 md 内容
-	_, err = file.WriteString(mdString)
-	if err != nil {
+	if _, err := newFile.WriteString(mdString); err != nil {
 		return err
 	}
 
@@ -241,33 +221,31 @@ func (p *mdProcessor) saveArticle(article *geekbang.ArticleResp, mdString string
 
 // 创建 summary.md
 func (p *mdProcessor) saveSummary() error {
-	// 进度条
-	progressBar := progressbar.Default(1, "创建课程 summary.md")
+	bar := progressbar.Default(1, "创建课程 summary.md")
 
+	// 创建 summary.md 文件
 	cfg := config.GetConfig()
-	summaryFile := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
-	file, err := os.OpenFile(summaryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	filename := path.Join(cfg.Md.SavePath, p.courseResp.Data.Title, "summary.md")
+	newFile, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer newFile.Close()
 
 	// 在内存中拼接
+	// 可以使用 content.Grow 估算内容长度，通过预分配内存减少扩容次数
 	var content strings.Builder
-	// todo 使用 content.Grow 预分配内存，估算内容长度进行优化
 	for _, outline := range p.outlineResp.Data.List {
 		line := fmt.Sprintf("* [%s](./docs/%d.md)\n", outline.ArticleTitle, outline.Id)
 		content.WriteString(line)
 	}
 
 	// 一次性写入
-	_, err = file.WriteString(content.String())
-	if err != nil {
+	if _, err := newFile.WriteString(content.String()); err != nil {
 		return err
 	}
 
-	err = progressBar.Finish()
-	if err != nil {
+	if err := bar.Finish(); err != nil {
 		return err
 	}
 

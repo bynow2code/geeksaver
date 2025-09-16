@@ -14,31 +14,35 @@ var configCmd = &cobra.Command{
 	Short: "配置信息",
 	Long:  `配置信息`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg := config.GetConfig()
-
-		// 组装 table 数据
-		var data [][]string
-		data = append(data, []string{"user", "gcid", cfg.User.GCID, "极客时间登陆用户ID"})
-		data = append(data, []string{"user", "gcess", cfg.User.GCESS, "极客时间登陆token"})
-		data = append(data, []string{"md", "savepath", cfg.Md.SavePath, "markdown保存路径"})
-
-		// 添加 table 头部
-		table := tablewriter.NewWriter(os.Stdout)
-		table.Header([]string{"Group", "Key", "Value", "Remark"})
-
-		// 添加 table 数据
-		err := table.Bulk(data)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// 渲染
-		if err = table.Render(); err != nil {
-			log.Fatalln(err)
-		}
+		doConfigPrint()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
+}
+
+// 打印配置信息
+func doConfigPrint() {
+	cfg := config.GetConfig()
+
+	// 组装 table 数据
+	var data [][]string
+	data = append(data, []string{"user", "gcid", cfg.User.GCID, "极客时间登陆用户ID"})
+	data = append(data, []string{"user", "gcess", cfg.User.GCESS, "极客时间登陆token"})
+	data = append(data, []string{"md", "savepath", cfg.Md.SavePath, "markdown保存路径"})
+
+	// 添加 table 头部
+	table := tablewriter.NewWriter(os.Stdout)
+	table.Header([]string{"Group", "Key", "Value", "Remark"})
+
+	// 添加 table 数据
+	if err := table.Bulk(data); err != nil {
+		log.Fatalln(err)
+	}
+
+	// 渲染
+	if err := table.Render(); err != nil {
+		log.Fatalln(err)
+	}
 }

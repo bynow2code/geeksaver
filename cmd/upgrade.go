@@ -21,13 +21,10 @@ import (
 
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
-	Short: "下载安装最新版",
-	Long:  `下载安装最新版`,
+	Short: "升级到最新版",
+	Long:  `升级到最新版`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := doUpgrade()
-		if err != nil {
-			log.Fatalln(err)
-		}
+		doUpgrade()
 	},
 }
 
@@ -36,8 +33,8 @@ func init() {
 }
 
 type upgradeProcessor struct {
-	releaseLatest ReleaseLatest
-	assert        Asset
+	releaseLatest *ReleaseLatest
+	assert        *Asset
 }
 
 type ReleaseLatest struct {
@@ -52,36 +49,34 @@ type Asset struct {
 }
 
 // 程序升级入口
-func doUpgrade() error {
-	processor := &upgradeProcessor{}
-
+func doUpgrade() {
 	fmt.Printf("当前版本: %s\n", version)
+
+	processor := &upgradeProcessor{}
 
 	// 检查更新
 	if err := processor.checkForUpdate(); err != nil {
-		return err
+		log.Fatalln(err)
 	}
 
 	fmt.Printf("最新版本: %s\n", processor.releaseLatest.TagName)
 
 	// 检查是否需要升级
 	if err := processor.checkNeedUpgrade(); err != nil {
-		return err
+		log.Fatalln(err)
 	}
 
 	// 升级
 	if err := processor.upgrade(); err != nil {
-		return err
+		log.Fatalln(err)
 	}
 
 	fmt.Println("升级完成")
-
-	return nil
 }
 
 // 检查更新并显示进度条
 func (u *upgradeProcessor) checkForUpdate() error {
-	checkBar := progressbar.NewOptions(1,
+	bar := progressbar.NewOptions(1,
 		progressbar.OptionSetDescription("检查更新中..."),
 		progressbar.OptionShowBytes(false),
 		progressbar.OptionFullWidth(),
@@ -96,7 +91,7 @@ func (u *upgradeProcessor) checkForUpdate() error {
 		return errors.New(fmt.Sprintf("获取新版本信息错误：%s", err))
 	}
 
-	if err := checkBar.Finish(); err != nil {
+	if err := bar.Finish(); err != nil {
 		return err
 	}
 
@@ -175,9 +170,9 @@ func (u *upgradeProcessor) matchUpgradeUrl() error {
 		return err
 	}
 
-	for _, asset := range u.releaseLatest.Assets {
+	for i, asset := range u.releaseLatest.Assets {
 		if upgradeFile == asset.Name {
-			u.assert = asset
+			u.assert = &u.releaseLatest.Assets[i]
 			return nil
 		}
 	}
@@ -201,7 +196,7 @@ func (u *upgradeProcessor) getPlatformBinaryName() (string, error) {
 
 // 升级
 func (u *upgradeProcessor) upgrade() error {
-	upgradeBar := progressbar.NewOptions(1,
+	bar := progressbar.NewOptions(1,
 		progressbar.OptionSetDescription("升级中..."),
 		progressbar.OptionShowBytes(false),
 		progressbar.OptionFullWidth(),
@@ -221,7 +216,7 @@ func (u *upgradeProcessor) upgrade() error {
 		return err
 	}
 
-	if err := upgradeBar.Finish(); err != nil {
+	if err := bar.Finish(); err != nil {
 		return err
 	}
 
