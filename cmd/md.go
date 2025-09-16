@@ -22,6 +22,9 @@ var mdCmd = &cobra.Command{
 	Use:   "md",
 	Short: "极客时间课程转 Markdown 并本地保存",
 	Long:  fmt.Sprintf("极客时间课程转 Markdown 并本地保存，默认保存路径：%s", config.DefaultMdSavePath),
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		doMdPreRunCheck()
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		doMd(cmd)
 	},
@@ -42,6 +45,27 @@ type mdProcessor struct {
 	cid         string                // 课程id
 	courseResp  *geekbang.CourseResp  // 课程响应体
 	outlineResp *geekbang.OutlineResp // 课表响应体
+}
+
+func doMdPreRunCheck() {
+	if version == devVersion {
+		green := "\033[32m"
+		reset := "\033[0m"
+		// 输出绿色提示信息，结束后重置颜色
+		fmt.Println(green + "当前使用的是 go install 安装，可前往 https://github.com/bynow2code/geeksaver/releases 查看新发布" + reset)
+		return
+	}
+
+	processor := &upgradeProcessor{}
+	if err := processor.getReleaseLatest(); err == nil {
+		need, _ := processor.needUpgrade()
+		if need {
+			green := "\033[32m"
+			reset := "\033[0m"
+			// 输出绿色升级提示信息，结束后重置颜色
+			fmt.Println(green + "有新版本，请执行 geeksaver upgrade 升级到最新版" + reset)
+		}
+	}
 }
 
 // 创建 markdown
