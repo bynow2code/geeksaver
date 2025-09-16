@@ -38,4 +38,5 @@ func initConfig() {
 	if err := vp.Unmarshal(config.GetConfig()); err != nil {
 		log.Fatalln(err)
 	}
+
 }
