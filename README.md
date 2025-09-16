@@ -24,7 +24,7 @@
     # 查看 GOPATH 路径
     go env GOPATH
     
-    # 安装 geeksaver
+    # 安装最新版
     go install github.com/bynow2code/geeksaver@latest
     # 指定版本安装
     go install github.com/bynow2code/geeksaver@v0.1.3
