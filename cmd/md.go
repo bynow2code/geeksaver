@@ -52,7 +52,7 @@ func doMdPreRunCheck() {
 		green := "\033[32m"
 		reset := "\033[0m"
 		// 输出绿色提示信息，结束后重置颜色
-		fmt.Println(green + "当前使用的是未打包版本，可前往 https://github.com/bynow2code/geeksaver/releases 查看最新发布版本" + reset)
+		fmt.Println(green + "您当前使用的是非正式打包文件，建议访问 https://github.com/bynow2code/geeksaver/releases 了解最新发布动态" + reset)
 		return
 	}
 
