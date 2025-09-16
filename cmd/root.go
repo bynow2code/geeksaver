@@ -20,6 +20,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+	cobra.EnableTraverseRunHooks = true
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalln(err)
 	}
