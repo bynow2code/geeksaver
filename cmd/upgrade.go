@@ -102,7 +102,7 @@ func (u *upgradeProcessor) checkForUpdate() error {
 // 获取最新版本
 func (u *upgradeProcessor) getReleaseLatest() error {
 	url := "https://api.github.com/repos/bynow2code/geeksaver/releases/latest"
-	client := http.Client{Timeout: 5 * time.Second}
+	client := http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
 		return err
@@ -228,7 +228,7 @@ func (u *upgradeProcessor) upgrade() error {
 // 升级文件
 func (u *upgradeProcessor) upgradeFile() error {
 	// 下载升级文件
-	client := http.Client{Timeout: 10 * time.Second}
+	client := http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Get(u.assert.BrowserDownloadUrl)
 	if err != nil {
 		return err
