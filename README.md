@@ -64,6 +64,10 @@
     - 提取的课程 ID：100029501（即 URL 中 intro/ 后的数字串）
 
 4. #### 转换并保存课程为 Markdown
+    ```
+    # 执行 markdown 转换命令
+    geeksaver md --cid 100029501
+    ```
    工具会自动下载课程所有章节内容，转换为 Markdown 格式后保存到本地，默认保存路径为 `$HOME/geek-docs`（Windows 系统路径为
    `C:\Users\你的用户名\geek-docs`）。
 
