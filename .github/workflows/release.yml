@@ -1,5 +1,5 @@
 # 工作流的名称。GitHub会在仓库的“Actions”标签下显示你的工作流名称
-name: Release
+name: Go Project Auto Release
 
 # 定义如何触发工作流
 on:
@@ -29,14 +29,14 @@ jobs:
     # 步骤序列（按顺序执行的一系列任务）
     steps:
       # 步骤1：将代码仓库克隆到虚拟机中
-      - name: 切分支
+      - name: 检出代码仓库
         # 引用 GitHub Actions 市场中的 Action see:https://github.com/marketplace?type=actions
         # 使用GitHub官方的checkout Action来获取代码
         # 这个Action会将你的代码仓库克隆到虚拟机的workspace目录
         uses: actions/checkout@main
 
       # 步骤2：在虚拟机中安装Go编程语言环境
-      - name: 安装 go 环境
+      - name: 设置 Go 环境
         # 使用GitHub官方的setup-go Action来安装Go
         uses: actions/setup-go@v6
         with:
@@ -44,7 +44,7 @@ jobs:
           go-version: stable
 
       # 步骤3：编译Go项目，生成多个平台的可执行文件
-      - name: 编译项目
+      - name: 交叉编译多平台二进制文件
         # 在虚拟机中执行shell命令
         run: |
           # 创建输出目录（用于存放编译后的可执行文件）
